@@ -1,3 +1,4 @@
+using Application.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -7,15 +8,17 @@ namespace Infrastructure
 {
     public static class DependecyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection serives,
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services,
         IConfiguration configuration)
         {
-            serives.AddDbContext<DataContext>(opt =>
+            services.AddDbContext<DataContext>(opt =>
             {
                 opt.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
             });
 
-            return serives;
+            services.AddScoped<IDataContext>(provider => provider.GetService<DataContext>());
+
+            return services;
         }
     }
 }
